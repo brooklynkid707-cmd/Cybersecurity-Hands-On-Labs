@@ -1,0 +1,11 @@
+﻿// Event ID 4663 — object access hunting query.
+// STATUS: Prepared for future telemetry expansion.
+// The current Sentinel configuration has not cloud-validated 4663.
+
+SecurityEvent
+| where TimeGenerated > ago(24h)
+| where Computer contains "CRYPTOGRAPHIC18"
+| where EventID == 4663
+| where ObjectName startswith @"C:\CyberLab\Sensitive"
+| project TimeGenerated, Account, SubjectUserName, ObjectName, AccessMask, Activity, Computer
+| order by TimeGenerated asc

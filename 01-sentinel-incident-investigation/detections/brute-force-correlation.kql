@@ -1,0 +1,21 @@
+﻿// Failed-to-successful authentication correlation.
+// Detection validation logic; not proof of compromise.
+
+SecurityEvent
+| where TimeGenerated > ago(24h)
+| where Computer contains "CRYPTOGRAPHIC18"
+| where EventID in (4624, 4625)
+| where TargetUserName =~ "CyberLabUser" or Account contains "CyberLabUser"
+| summarize
+    FailedAttempts=countif(EventID == 4625),
+    SuccessfulLogons=countif(EventID == 4624),
+    FirstFailure=minif(TimeGenerated, EventID == 4625),
+    LastFailure=maxif(TimeGenerated, EventID == 4625),
+    FirstSuccess=minif(TimeGenerated, EventID == 4624),
+    LogonTypes=make_set(LogonType),
+    SourceIPs=make_set(IpAddress)
+  by TargetUserName, Computer
+| where FailedAttempts > 0 and SuccessfulLogons > 0
+| extend SecondsFromLastFailureToSuccess = datetime_diff("second", FirstSuccess, LastFailure)
+| project TargetUserName, Computer, FailedAttempts, SuccessfulLogons, FirstFailure, LastFailure, FirstSuccess, SecondsFromLastFailureToSuccess, LogonTypes, SourceIPs
+| order by FirstSuccess desc

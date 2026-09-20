@@ -1,0 +1,12 @@
+﻿// PowerShell Script Block Logging — Event ID 4104.
+// STATUS: Local Event 4104 logging was validated.
+// Cloud collection was not completed in this lab.
+// Event 4104 is written to Microsoft-Windows-PowerShell/Operational.
+
+WindowsEvent
+| where TimeGenerated > ago(24h)
+| where Computer contains "CRYPTOGRAPHIC18"
+| where EventID == 4104
+| where RenderedDescription contains "CYBERLAB-IR-20260919-4104"
+| project TimeGenerated, Computer, EventID, RenderedDescription
+| order by TimeGenerated asc

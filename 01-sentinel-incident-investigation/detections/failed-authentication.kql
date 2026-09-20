@@ -1,0 +1,10 @@
+﻿// Failed authentication hunting query
+// Validated against SecurityEvent telemetry in Microsoft Sentinel.
+
+SecurityEvent
+| where TimeGenerated > ago(24h)
+| where Computer contains "CRYPTOGRAPHIC18"
+| where EventID == 4625
+| where TargetUserName =~ "CyberLabUser" or Account contains "CyberLabUser"
+| project TimeGenerated, EventID, Account, TargetUserName, LogonType, IpAddress, WorkstationName, Computer, Activity
+| order by TimeGenerated asc
