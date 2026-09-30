@@ -1,4 +1,4 @@
-﻿# Evidence
+# Evidence
 
 This directory contains evidence generated during the authorized CyberLab exercise.
 
@@ -7,33 +7,25 @@ This directory contains evidence generated during the authorized CyberLab exerci
 - `authentication-events.csv` — local Windows authentication evidence
 - `file-access-events.csv` — local object-access evidence
 - `powershell-events.csv` — local PowerShell logging evidence
-- `screenshots/` — location for sanitized Azure, Sentinel, and KQL screenshots
+- `screenshots/` — reserved for sanitized Azure, Sentinel, and KQL screenshots
+
+## Current Evidence Gap
+The screenshot directory is presently empty. This is a known portfolio-quality gap.
+
+No replacement or synthetic screenshot should be created merely to make the repository appear complete. The next live execution of the lab should capture the evidence set below.
+
+## Required Screenshot Set for Next Validation Run
+
+1. Azure Arc endpoint showing connected state.
+2. AMA / DCR assignment or successful collection configuration.
+3. Microsoft Sentinel / Log Analytics query returning SecurityEvent data.
+4. KQL output showing the controlled 4625 event.
+5. KQL output showing the controlled 4624 event.
+6. Correlation query showing the failed-to-successful sequence.
+7. Optional incident/analytics-rule view if an analytic rule is created and triggered.
 
 ## Evidence Standards
-
-Only genuine output from the lab should be stored here.
-
-Do not fabricate screenshots or results.
-
-Before publishing screenshots:
-
-- remove unnecessary tenant/subscription identifiers;
-- crop unrelated personal information;
-- never expose passwords;
-- never expose API keys or access tokens;
-- never expose temporary credentials;
-- retain enough technical context to show the query, event, timestamp, and result.
-
-## Recommended Screenshot Set
-
-1. Azure Arc endpoint showing Connected.
-2. Successful AMA/DCR deployment.
-3. Sentinel connector showing SecurityEvent ingestion.
-4. KQL output showing 4625 and 4624.
-5. Failed-to-successful authentication correlation result.
+Before publishing screenshots, remove unnecessary tenant/subscription identifiers; crop unrelated personal information; never expose passwords, API keys, access tokens, or temporary credentials; and preserve enough query/event context for technical review.
 
 ## Evidence Boundary
-
-The CSV files represent local baseline evidence.
-
-They must not be described as proof that those historical events were retroactively ingested into Microsoft Sentinel.
+The CSV files represent local baseline evidence. They must not be described as proof that those historical events were retroactively ingested into Microsoft Sentinel.

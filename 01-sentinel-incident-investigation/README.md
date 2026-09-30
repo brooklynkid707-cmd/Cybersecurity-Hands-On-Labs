@@ -1,4 +1,10 @@
-﻿# Lab 01 — Microsoft Sentinel Detection & Incident Investigation
+# Lab 01 — Microsoft Sentinel Detection & Incident Investigation
+
+## Recruiter Snapshot
+
+**What this proves:** SIEM configuration, Windows telemetry, KQL, detection engineering, evidence handling, incident analysis, MITRE ATT&CK mapping, and security documentation.
+
+**Validation status:** Completed in an authorized synthetic lab. The repository distinguishes cloud-validated Sentinel events from local-only baseline artifacts.
 
 ## Executive Summary
 
@@ -13,8 +19,6 @@ Cloud-side validation confirmed both a failed authentication event (**4625**) an
 A correlation query successfully identified the failed-to-successful authentication sequence.
 
 > **Scope:** This is an authorized synthetic cybersecurity lab. It does not represent a real compromise.
-
----
 
 ## Environment
 
@@ -31,8 +35,6 @@ A correlation query successfully identified the failed-to-successful authenticat
 | Primary table | SecurityEvent |
 | Test identity | CyberLabUser |
 | Query language | KQL |
-
----
 
 ## Architecture
 
@@ -64,51 +66,35 @@ SOC Investigation
 
 See [architecture/lab-architecture.md](./architecture/lab-architecture.md).
 
----
-
 ## Controlled Scenario
 
-The lab generated a controlled authentication sequence against the local endpoint.
-
-The workflow included:
-
 1. Failed network authentication attempts against `CyberLabUser`.
-2. A successful network authentication for the same account.
+2. Successful network authentication for the same account.
 3. Windows Security Event validation.
 4. AMA/DCR ingestion into Sentinel.
 5. KQL investigation of Event IDs 4625 and 4624.
 6. Correlation of failed authentication followed by successful authentication.
 7. Analyst disposition based on surrounding evidence.
 
-Earlier local testing produced six failed 4625 events and one successful 4624 event.
-
-After Sentinel ingestion was enabled, a fresh cloud-validation sequence was generated.
+Earlier local testing produced six failed 4625 events and one successful 4624 event. After Sentinel ingestion was enabled, a fresh cloud-validation sequence was generated.
 
 Sentinel visibly returned a **4625** and **4624** for `CyberLabUser` on `CRYPTOGRAPHIC18`.
 
 The local baseline and cloud validation are deliberately documented separately so local events are not misrepresented as having been retroactively ingested into Sentinel.
 
----
+## Detection Content
 
-## Detection Engineering
-
-Detection and hunting content in this project includes:
-
-- Event ID 4625 — Failed authentication
-- Event ID 4624 — Successful authentication
-- Failed-to-successful authentication correlation
-- Event ID 4663 — Sensitive file access investigation query
-- Event ID 4104 — PowerShell Script Block investigation query
+- [Failed authentication](./detections/failed-authentication.kql)
+- [Successful authentication](./detections/successful-authentication.kql)
+- [Failed-to-successful correlation](./detections/brute-force-correlation.kql)
+- [PowerShell investigation](./detections/powershell-investigation.kql)
+- [Sensitive file access](./detections/sensitive-file-access.kql)
 
 The authentication queries and correlation workflow were validated against Sentinel telemetry.
 
 The 4663 and 4104 queries are retained as future telemetry-expansion content and are **not represented as completed Sentinel detections**.
 
----
-
 ## Investigation Findings
-
-The validated authentication activity contained:
 
 | Attribute | Observation |
 |---|---|
@@ -120,17 +106,11 @@ The validated authentication activity contained:
 | Source | IPv6 loopback (`::1`) |
 | Correlation | Failed authentication followed by successful authentication |
 
-Because the source was localhost and the activity was deliberately generated, the correct disposition was:
-
-**Authorized security validation / benign simulation**
-
-rather than compromise.
-
----
+Because the source was localhost and the activity was deliberately generated, the correct disposition was **authorized security validation / benign simulation**, not compromise.
 
 ## MITRE ATT&CK Context
 
-The simulated behavior can be used to validate detection coverage for:
+Validated simulated behavior supports detection coverage discussion for:
 
 - **T1110 — Brute Force**
 - **T1078 — Valid Accounts**
@@ -140,47 +120,39 @@ Additional planned telemetry maps to:
 - **T1059.001 — PowerShell**
 - **T1005 — Data from Local System**
 
-These mappings describe simulated behavior for detection validation. They do not claim that an adversary executed these techniques.
-
 See [investigation/mitre-mapping.md](./investigation/mitre-mapping.md).
 
----
+## Evidence and Investigation Artifacts
 
-## Evidence Integrity
+- [Evidence index](./evidence/README.md)
+- [Authentication evidence](./evidence/authentication-events.csv)
+- [Analyst notes](./investigation/analyst-notes.md)
+- [Incident timeline](./investigation/incident-timeline.md)
+- [MITRE mapping](./investigation/mitre-mapping.md)
+- [Remediation recommendations](./remediation/recommendations.md)
 
-Raw local evidence is retained under the `evidence` directory.
+### Screenshot gap
 
-Screenshots added to this repository should contain only genuine Azure, Sentinel, Windows, or KQL output.
-
-No passwords, access tokens, API keys, temporary credentials, or sensitive personal information should be committed.
-
----
+The repository does **not yet contain the recommended Sentinel/Azure screenshots**. This is intentionally disclosed rather than filled with reconstructed or fabricated imagery. Future lab execution should capture screenshots at the time of validation.
 
 ## Skills Demonstrated
 
-This lab demonstrates:
-
 - Azure Arc endpoint onboarding
-- Azure RBAC troubleshooting
 - Azure Monitor Agent deployment
 - Data Collection Rule engineering
 - Log Analytics integration
-- Microsoft Sentinel configuration
+- Microsoft Sentinel
 - Windows Security Event analysis
 - KQL hunting
-- Detection correlation
+- detection correlation
 - SOC investigation methodology
 - MITRE ATT&CK mapping
-- False-positive/context analysis
-- Technical documentation
-- Evidence integrity
-
----
+- false-positive/context analysis
+- technical documentation
+- evidence integrity
 
 ## Key Takeaway
 
-This project demonstrates the complete security telemetry lifecycle rather than only a single query:
+This project demonstrates the complete security telemetry lifecycle:
 
 **endpoint activity → telemetry collection → cloud ingestion → SIEM analysis → detection correlation → analyst decision → remediation guidance**
-
-That distinction is critical in production security operations.
